@@ -1,0 +1,376 @@
+{% block header %} {% include 'partials/header.html.twig' %} {% endblock %}
+<main>
+    {% if page.params.content.top.theme.0.value=="default"%}
+        {% set theme="head_default" %}
+    {% endif %}
+    {% set theme="head_default" %}
+    <div class="head_section {{ theme }}"  {% if tabs| length <=0 %}id="no-tabs"{% endif %}>
+        <div class="container">
+            <div class="content-wrapper f-row bc-wrap">
+                    <div>
+                        {% include 'partials/breadcrumbs.html.twig' %}
+                    </div>
+                    <div>
+                        {% include 'partials/disclosure.html.twig' %}
+                    </div>
+            </div>
+            <div class="content-wrapper top_banks">
+                {% if  page.params.content.top.top_logo.0.value==1%}
+                <div class="banks__image_top">
+
+                        <picture>
+                            <source srcset="{{ mrc.webp }}" type="image/webp">
+                            <img src="{{ mrc.png }}" alt="{{ mrc.name }}">
+                        </picture>
+
+                </div>
+                {% endif %}
+                <h1 {% if  page.params.content.top.top_logo.0.value!=1%}id="no-logo"{%  endif %}>
+                    {{ page.params.headings.h1.0.value|split('<<merch_name>>')|join(mrc.name) |raw }}
+                </h1>
+                <div>
+                <div class="block_show_hide"> {{page.params.content.top.text.0.value|split('<<merch_name>>')|join(mrc.name) |raw }}</div>
+                <span class="hide_show">Show more</span>
+                </div>
+                {% if page.params.content.top.disclaimer.0.value %}
+                <p class="top_disclaimer">{{ page.params.content.top.disclaimer.0.value |split('<<merch_name>>')|join(mrc.name) |raw }}</p>
+                {% endif %}
+            </div>
+        </div>
+       {% if tabs| length >=1 %}
+        <div class="tabs_headings{% if show_tabs_block!=1 %}_no{% endif %}">
+            <div class="container">
+                <div class="content-wrapper rel">
+                    {% if show_tabs_block==1 %}
+                    <ul class="tabs js-compare-tabs">
+                        {% for tab in tabs %}
+                            {% if tab.title  %}
+                                <li {% if loop.index==1 %}class="active {%  if tabs|length==1 %}one_tabs{% endif %}"{% endif %} data-compare-show="{{ page.params.show_compare_link.link[loop.index0].value }}" data-table="{{ loop.index }}" data-tabs-title="{{ tab.title  }}" data-tabs-title-mobile="{{ tab.title_mobile  }}"><span><b></b>&nbsp;(<span class="col_tab">{{ tab.num }}</span>)</span></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <div class="options_table">
+
+                        <a href="" class="compare_all_offers"
+                           data-display-tab0="{% if page.params.show_filters.show_filters.0.value==1 %}{{ page.params.show_filters.show_filters.0.value }}{% else %}0{% endif %}"
+                           data-display-tab1="{% if page.params.show_filters.show_filters.1.value==1 %}{{ page.params.show_filters.show_filters.1.value }}{% else %}0{% endif %}"
+                           data-display-tab2="{% if page.params.show_filters.show_filters.2.value==1 %}{{ page.params.show_filters.show_filters.2.value }}{% else %}0{% endif %}">Filter by credit history +</a>
+                        <a href="" class="sort_offers rel"
+                           data-display-tab0="{% if page.params.sorting.tab_1_sorting.show_sort_block.0.value==1 %}{{ page.params.sorting.tab_1_sorting.show_sort_block.0.value }}{% else %}0{% endif %}"
+                           data-display-tab1="{% if page.params.sorting.tab_2_sorting.show_sort_block.0.value==1 %}{{ page.params.sorting.tab_2_sorting.show_sort_block.0.value }}{% else %}0{% endif %}"
+                           data-display-tab2="{% if page.params.sorting.tab_3_sorting.show_sort_block.0.value==1 %}{{ page.params.sorting.tab_3_sorting.show_sort_block.0.value }}{% else %}0{% endif %}"
+                           data-display-tab3="{% if page.params.sorting.tab_4_sorting.show_sort_block.0.value==1 %}{{ page.params.sorting.tab_4_sorting.show_sort_block.0.value }}{% else %}0{% endif %}">Sort offers +</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% for  products_table in products %}
+        <div class="table_cards table_{{ loop.index }}" data-number-tab="{{ loop.index }}">
+            <div class="container">
+                <div class="content-wrapper">
+                    <div class="filters" data-table="">
+                        {% set table=loop.index %}
+                        <div class="filters_options">
+                            {% for  options in sorting[loop.index] %}
+                                {% for  option in options %}
+                                    <div class="option col1">
+                                        <input type="radio" name="step{{ table }}" class="radio-option" id="radio-tool_{{ table }}_{{ loop.index }}" data-tab="{{ table }}" data-position="{{ loop.index }}" {% if loop.index==1 %}checked{% endif %}/><label class="label-option" for="radio-tool_{{ table }}_{{ loop.index }}"></label><span class="span_name_opt" for="radio-tool_{{ table }}_{{ loop.index }}">{{ option }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                            <div class="option col6">
+                                <span class="hide_options">Hide</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="filters_history" data-table="">
+                        {% set table=loop.index %}
+                        <div class="filters_history_options">
+
+                            {% for  filters in filter[loop.index][0] %}
+
+                                {% set fil_pos=loop.index %}
+                                {% for  filter in filters %}
+
+                                    <div class="option col1">
+                                        <input type="checkbox" name="step{{ table }}" class="check-option table_fil{{ table }}" id="check-tool_{{ table }}_{{ fil_pos }}" data-tab="{{ table }}" data-position="{{ fil_pos }}" data-col="{{ filter.value }}" {% if filter.value>0 %}checked {% else %}disabled {% endif %}/><label class="label-option {% if filter.value<1 %}blocked{% endif %}" for="check-tool_{{ table }}_{{ fil_pos }}"></label><span class="span_name_opt {% if filter.value<1 %}blocked{% endif %}">{{ filter.title }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+
+                            <div class="option col6">
+                                <span class="hide_options_history">Hide</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                    <div class="all_compare_block content-wrapper"
+                         data-display-tab0="{% if page.params.show_compare_link.link.0.value==1 %}{{ page.params.show_compare_link.link.0.value }}{% else %}0{% endif %}"
+                         data-display-tab1="{% if page.params.show_compare_link.link.1.value==1 %}{{ page.params.show_compare_link.link.1.value }}{% else %}0{% endif %}"
+                         data-display-tab2="{% if page.params.show_compare_link.link.2.value==1 %}{{ page.params.show_compare_link.link.2.value }}{% else %}0{% endif %}">
+                        <a href="" class="all_compare">Compare all these offers</a>
+                    </div>
+
+                {% set tab=loop.index %}
+                <div class="products_table_{{ loop.index }}">
+                    {% for  product in products_table %}
+                        {% if loop.index==1 %}
+                            {%  set best=" " %}
+                            {%  set color="yellow" %}
+                        {% else %}
+                            {%  set best=" " %}
+                            {%  set color="yellow" %}
+                        {% endif %}
+
+                        {% if product.type == "1028" %}
+                            {% set type_card='credit_cards' %}
+                            {% set rating = product['attributes'][page.params.products.credit_cards.rating_attribute.0.value].value %}
+                            {% set rating_sort = product['attributes'].4356.value %}
+                            {% set description = product['attributes'][page.params.products[type_card].attr_credit_cards_description_id.0.value]['value'] %}
+                        {% elseif product.type == "1030" %}
+                            {% set type_card='prepaid_cards' %}
+                            {% set rating = product['attributes'][page.params.products.prepaid_cards.rating_attribute.0.value].value %}
+                            {% set rating_sort = product['attributes'].4360.value %}
+                            {% set description = product['attributes'][page.params.products[type_card].attr_prepaid_cards_description_id.0.value]['value'] %}
+                        {% elseif product.type == "1032" %}
+                            {% set type_card='loans' %}
+                            {% set rating = product['attributes'][page.params.products.loans.rating_attribute.0.value].value %}
+                            {% set rating_sort = product['attributes'].4363.value %}
+                            {% set description = product['attributes'][page.params.products[type_card].attr_loans_description_id.0.value]['value'] %}
+                        {% elseif product.type == "1034" %}
+                            {% set type_card='credit_repair' %}
+                            {% set rating = product['attributes'][page.params.products.credit_repair.rating_attribute.0.value].value %}
+                            {% set description = product['attributes'][page.params.products[type_card].attr_credit_repair_description_id.0.value]['value'] %}
+                        {% endif %}
+                        <div class="product_table {% if loop.index>7 %} hide_product {% endif %} {{ best }}" {% if product.icons_attr | length<1 %}style="margin-right: 0px;"{% endif %} data-sort1="{{ product.sort_option_1 }}" data-sort2="{{ product.sort_option_2 }}" data-sort3="{{ product.sort_option_3 }}" data-sort4="{{ product.sort_option_4 }}" data-sort5="{{ product.sort_option_5 }}" data-filter1="{{ product.filter_option_1 }}" data-filter2="{{ product.filter_option_2 }}" data-filter3="{{ product.filter_option_3 }}" data-filter4="{{ product.filter_option_4 }}" data-filter5="{{ product.filter_option_5 }}"
+                                {% if product.type == 1028 %}
+                                    data-mainentity-product="CreditCard"
+                                {% elseif product.type == 1030 %}
+                                    data-mainentity-product="PaymentCard"
+                                {% elseif product.type == 1032 %}
+                                    data-mainentity-product="LoanOrCredit"
+                                {% endif %}
+                        >
+                            <div class="card_common_info">
+                                <div class="bg_name_card {{ color }}">
+                                    <h3><a  class="{% include 'partials/NavigatorTool/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.cardname} %}" {% include 'partials/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.cardname} %} data-mainentity-product-name>{{ product.name | raw}}</a></h3>
+
+                                </div>
+                                <a  class="product_table_img {% include 'partials/NavigatorTool/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.pic} %}" {% include 'partials/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.pic} %}>
+                                    <picture>
+                                        <source srcset="{{ product.image.webp }}" type="image/webp">
+                                        <img src="{{  product.image.png }}"  class="cart_pop_up" alt="Apply for {{ product.name | escape}} - Credit-Land.com" {% include 'partials/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.pic} %} data-mainentity-product-image>
+                                    </picture>
+                                </a>
+                                {% if product.mnemonics.comparable=='1' %}
+                                    <div class="compare">
+                                        <a>Compare</a>
+                                        <input class="check js-compare-checkbox" data-product-number="{{ product.cts2_id }}"  type="checkbox" name="check" id="compare{{ product.cts2_id }}">
+                                        <label class="js-compare-label" for="compare{{ product.cts2_id }}"></label>
+                                    </div>
+                                {% endif %}
+                                <p class="rating" data-mainentity-product-aggregaterating-author-name="{{ sData.publisherName }}">Rating
+                                    <span class="number_raiting" data-mainentity-product-aggregaterating-value="{% if rating|length <2  %}{{ rating }}.0 {% else %}{{ rating }} {% endif %}">{% if  rating|length <2  %}{{ rating }}.0 {% else %}{{ rating }} {% endif %}</span><span class="js-tooltip card_aquestion" data-tooltipster-content="<span class='js-tooltip-close'></span> {{ site.params.wine.content.rating_tooltip.0.value }}"><span data-id="{{ product.cts2_id }}"  class="question-block-tools ">{% include 'partials/icons/question_icon.html.twig' %} </span></span>
+                                </p>
+                                <a  class="apply-home-tools {% include 'partials/NavigatorTool/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.button} %}" {% include 'partials/product_link_attributes.html.twig' with {'noTargetCheck': '0','link': product.element_links.button} %}>APPLY</a>
+                                <p class="dca__discover"> {% if product.type == "1028" %}
+                                        {{ product['attributes'][5172]['value'] | raw }}
+                                    {% elseif product.type == "1030" %}
+                                        {{ product['attributes'][5173]['value'] | raw}}
+                                    {% elseif product.type == "1032" %}
+                                        {{ product['attributes'][5174]['value'] | raw}}
+                                    {% endif %}</p>
+                                <div class="dca__credit-wrapper">
+                                    <div class="dca__credit rel">
+                                        {% if  product.type!='1034' and product.type!="1024"%}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px"
+                                                 clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality"
+                                                 shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
+                                                 version="1.1" viewBox="0 0 423 423" xml:space="preserve">
+                                                <path d="m211 0c59 0 111 24 150 62 38 38 62 91 62 149 0 59-24 111-62 150-39 38-91 62-150 62-58 0-111-24-149-62-38-39-62-91-62-150 0-58 24-111 62-149s91-62 149-62zm10 240c-5 5-15 5-20-1-6-6-6-15 0-20l53-51c6-6 15-6 21 0 5 6 5 15-1 21l-53 51zm-136-26c0 8-6 14-15 14-8 0-14-6-14-14 0-43 17-82 45-110 28-29 67-46 110-46s82 17 110 46c28 28 46 67 46 110 0 8-7 14-15 14s-15-6-15-14c0-35-14-67-37-90-22-22-54-37-89-37s-66 15-89 37c-23 23-37 55-37 90zm255-131c-33-33-78-54-129-54-50 0-95 21-128 54s-54 78-54 128c0 51 21 96 54 129s78 53 128 53c51 0 96-20 129-53s53-78 53-129c0-50-20-95-53-128z"
+                                                      fill="#491E4A" fill-rule="nonzero"></path>
+                                            </svg>
+                                        {% endif %}
+
+                                        {{ product['attributes'][page.params.products[type_card].history_attribute.0.value]['value']|raw }}
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card_attr {% if product.icons_attr | length==0 %}no-icons-prd{% endif %}">
+
+                                <div class="table">
+                                    {% for  key,attr in attr_card_tabs[type_card][tab]%}
+
+                                        <div class="tr" data-mainentity-product-additionalproperty>
+                                            <div class="title_attr_card td" data-mainentity-product-additionalproperty-name>{{ attr.title }}</div>
+                                            <div class="value_attr_card td" data-mainentity-product-additionalproperty-value>
+                                                {% if product['attributes'][attr.value]['value'] is iterable %}
+                                                    {% for value in product['attributes'][attr.value]['value'] %}
+                                                        {{ value |raw}}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {% if product['attributes'][attr.value]['value']=='1' %}
+                                                        Yes
+                                                    {% elseif product['attributes'][attr.value]['value']=='0' %}
+                                                        No
+                                                    {% else %}
+                                                        {{ product['attributes'][attr.value]['value'] | raw }}
+                                                    {% endif %}
+                                                {% endif %}
+
+
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    <div class="see_block">
+                                        <a href="{{product['mnemonics']['terms_link'][0]}}" target="_blank" class="see_rates" rel="nofollow noopener">{{product['mnemonics']['terms_link'][1]}}</a>
+                                    </div>
+                                </div>
+
+                                <div class="css_dropdown">
+                                    <input id="card-details_{{ tab }}_{{ product.cts2_id }}" type="checkbox" checked="checked">
+                                    <div class="details_short_text{% if product.icons_attr | length==0 %}1{% endif %} rel {% if description | length >1 and product.icons_attr | length>0 %}shadow{% endif %}" data-mainentity-product-description>
+                                        <ul class="" >
+                                            {% if description | length >0 %}
+                                                {% if product['attributes'][4952]['value']==1 %}
+                                                    {% set exceptions_on=0 %}
+                                                    {% for  exceptions in page.params.products.details_bullet.exceptions %}
+                                                        {% if exceptions.value == product.merchant_id %}
+                                                            {%  set exceptions_on=exceptions_on+1 %}
+                                                        {% endif %}
+
+                                                    {% endfor %}
+
+                                                    {% if  exceptions_on > 0%}
+                                                        <li >{{ page.params.products.details_bullet.text_exceptions.0.value | split('«APPLY ONLINE»')|join('"<a class="apply_online_bullet" href="'~product['apply']~'" target="_blank"><b>APPLY ONLINE</b></a>"') |raw }}</li>
+                                                    {% else %}
+                                                        <li>{{ page.params.products.details_bullet.text.0.value | split('«APPLY ONLINE»')|join('"<a class="apply_online_bullet" href="'~product['apply']~'" target="_blank"><b>APPLY ONLINE</b></a>"') |raw  }}</li>
+                                                    {% endif %}
+                                                {% endif %}
+
+                                                {% for  value in description %}
+                                                    <li>{{ value | raw }}</li>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    {% if description | length >1 and product.icons_attr | length > 0 %}
+                                        <label for="card-details_{{ tab }}_{{ product.cts2_id }}" class="card-details">
+                                            <span class="closed" >Show more details</span>
+                                            <span class="open">Show less details</span>
+                                        </label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if product.icons_attr | length>0 %}
+                                <div class="block_icons_and_one_attr rel">
+
+                                    <div class="block-icon-attr">
+                                        <div class="icons_attr_head">
+                                            {% for icon in product.icons_attr%}
+
+                                                <div class="{% if loop.index == 1 %}act{% endif %}" data-icons-descriptions="{{ loop.index }}">{% include 'partials/icons/'~icon.icon~'.html.twig' ignore missing %}<i></i></div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+                                        {% for icon in product.icons_attr%}
+
+                                            <div class="description_attr icons{{ loop.index }}" >
+
+                                                {{  icon.value | raw }}
+
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    {% endfor %}
+                </div>
+                {% if  products_table | length > 7%}<a href="" class="show_more_cards" data-table-show="{{ tab }}" data-action-table="1">SHOW MORE CARDS</a>{% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    {% if page.params.content.bottom.h2.0.value or  bottom_block%}
+    <div class="banks_about">
+        <div class="container">
+            <div class="bank_info_block rel">
+                <div class="yellow_block"></div>
+                <h2>{{ page.params.content.bottom.h2.0.value |split('<<merch_name>>')|join(mrc.name) |raw}}</h2>
+                {% for bottom in bottom_block %}
+                <div class="blocks_list_about {% if loop.index==1 %}open{% endif %}">
+                    <div class="title">
+                        {% include 'partials/icons/'~bottom.icon~'.html.twig' ignore missing %}
+                        <h3 class="{% if bottom.icon |length<1 %}no-icon-bank-info{% endif %}">{{ bottom.title | raw }}</h3>
+                    </div>
+                    <div class="description">
+                        <p>{{ bottom.text |split('<<merch_name>>')|join(mrc.name) |raw }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="questions_blocks">
+        <div class="container rel">
+            <div class="content-wrapper">
+                <h2>{{ page.params.content.faqs.h3.0.value |raw}}</h2>
+                <div class="question-block-faq" data-part-questions>
+                    <div class="accordion">
+                        {% for faq in faqsblock %}
+                        <section class="accordion_item {% if loop.index==1 %}active_block{% endif %}" data-part-questions-block>
+                            <div class="rel padding-left">
+                                <h5 class="title_block"><span class="uniform-bg" data-part-questions-block-text>{{ faq.title|raw }}</span></h5>
+                            </div>
+                            <div class="info" {% if loop.index==1 %}style="display: block"{% endif %}>
+                                <p class="info_item" data-part-questions-block-answer>{{ faq.excerpt|raw }}</p>
+                                <a href="{{ faq.link }}" class="faq-read-more" data-part-questions-block-url>Read more</a>
+                            </div>
+                        </section>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="ask_question">
+                    <picture>
+                        <img src="/build/images/categories/landing/message.svg" alt="" data-part-articles-block-img>
+                    </picture>
+                    <h3>{{ page.params.content.faqs.ask_question_heading.0.value |raw}}
+                    </h3>
+                    <h4>{{ page.params.content.faqs.ask_question_text.0.value |raw}}</h4>
+                    <a href="#ask-form__popup" modal class="ask_question_button">{{ page.params.content.faqs.button_ask_question.0.value |raw}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'partials/disqus/template.html.twig' with {'title': page.params.content.comments_heading.0.value} %}
+    <div class="container banks_block">
+        {% include 'categories/banks/BankApply/blocks/banks.html.twig' %}
+    </div>
+    <div class="wrapper_content wp-footnotes">
+        {% for  footnotes in page.params.footnotes.footnotes %}
+            <p> {{ footnotes.value | raw}}</p>
+        {% endfor %}
+    </div>
+    <div class="wrapper_content wp-footnotes js-footnotes">
+
+    </div>
+</main>
+
+{% include 'partials/footer.html.twig' %}
+
+{% include 'partials/ask_form.html.twig' %}
